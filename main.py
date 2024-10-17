@@ -5,13 +5,15 @@ from tkinterdnd2 import TkinterDnD, DND_FILES
 
 
 def rename_files_in_folder(folder_path, target_string, replacement_string):
-    for filename in os.listdir(folder_path):
-        if target_string in filename:
-            new_filename = filename.replace(target_string, replacement_string)
-            old_file = os.path.join(folder_path, filename)
-            new_file = os.path.join(folder_path, new_filename)
-            os.rename(old_file, new_file)
-            print(f'Renamed: {old_file} -> {new_file}')
+    for root, dirs, files in os.walk(folder_path):
+        for filename in files:
+            if target_string in filename:
+                new_filename = filename.replace(
+                    target_string, replacement_string)
+                old_file = os.path.join(root, filename)
+                new_file = os.path.join(root, new_filename)
+                os.rename(old_file, new_file)
+                print(f'Renamed: {old_file} -> {new_file}')
 
 
 def select_folder():
@@ -31,7 +33,7 @@ def process_folder(folder_path):
 
 
 def drop(event):
-    folder_path = event.data
+    folder_path = event.data.strip('{}')  # フォルダパスの前後の{}を削除
     if os.path.isdir(folder_path):
         process_folder(folder_path)
     else:
